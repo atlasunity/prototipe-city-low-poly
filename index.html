@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>ProjectNASA</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.png" />
+    <link rel="stylesheet" href="TemplateData/style.css" />
+  </head>
+  <body class="dark">
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+    </div>
+    <div id="loading-cover" style="display: none">
+      <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="TemplateData/logo-main.png" /></div>
+        <div id="text-introduction">
+          <p id="text-title">SELAMAT DATANG</p>
+          <p id="text-description">Atlas</p>
+        </div>
+        <div id="unity-progress-value">
+          <p id="progress-text"></p>
+        </div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <iframe
+      id="webview-frame"
+      src="https://atlasvirtual.id/tour/oadkids/"
+      frameborder="0"
+    ></iframe>
+    <div id="btn-close" onclick="DisableCloseButton()"></div>
+    <script>
+            const webviewIframe = document.querySelector("#webview-frame");
+            const btnCloseWebView = document.querySelector("#btn-close");
+
+            function EnableCloseButton() {
+              webviewIframe.style.display = "block";
+              btnCloseWebView.style.display = "block";
+            }
+
+            function DisableCloseButton(gameInstance) {
+              webviewIframe.style.display = "none";
+              btnCloseWebView.style.display = "none";
+            }
+
+            const buildUrl = "Build";
+            const loaderUrl = buildUrl + "/[WebGL] Prototype City Low Poly.loader.js";
+            const config = {
+              dataUrl: buildUrl + "/[WebGL] Prototype City Low Poly.data",
+              frameworkUrl: buildUrl + "/[WebGL] Prototype City Low Poly.framework.js",
+              codeUrl: buildUrl + "/[WebGL] Prototype City Low Poly.wasm",
+              streamingAssetsUrl: "StreamingAssets",
+              companyName: "Atlas Reality",
+              productName: "ProjectNASA",
+              productVersion: "0.1",
+            };
+            const container = document.querySelector("#unity-container");
+            const canvas = document.querySelector("#unity-canvas");
+            const loadingCover = document.querySelector("#loading-cover");
+            let progressValueText = document.querySelector("#progress-text");
+            const spinner = document.querySelector('.spinner');
+
+            const canFullscreen = (function() {
+              for (const key of [
+                  'exitFullscreen',
+                  'webkitExitFullscreen',
+                  'webkitCancelFullScreen',
+                  'mozCancelFullScreen',
+                  'msExitFullscreen',
+                ]) {
+                if (key in document) {
+                  return true;
+                }
+              }
+              return false;
+            }());
+
+            // if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            //   container.className = "unity-mobile";
+            //   config.devicePixelRatio = 1;
+            // }
+            loadingCover.style.display = "";
+
+            const script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+              createUnityInstance(canvas, config, (progress) => {
+                let progressValue = `${Math.floor(100 * progress)}%`;
+                progressValueText.textContent = progressValue;
+                spinner.style.display = "none";
+              }).then((unityInstance) => {
+                loadingCover.style.display = "none";
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+            document.body.appendChild(script);
+    </script>
+    <script>
+      var unityInstance = UnityLoader.instantiate(
+        "unity-container",
+        "%UNITY_WEBGL_BUILD_URL%",
+        { onProgress: customProgress }
+      );
+    </script>
+    <script></script>
+  </body>
+</html>
